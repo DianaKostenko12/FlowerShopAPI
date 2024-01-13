@@ -1,13 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace FlowerShop.Models
+﻿namespace FlowerShop.DTO
 {
-    public class Flower
+    public class FlowerDto
     {
         public int FlowerId { get; set; }
         public string FlowerName { get; set; }
         public int FlowerCount { get; set; }
         public float FlowerCost { get; set; }
-        public ICollection<BouquetFlower> BouquetsFlowers { get; set; }
     }
 }
