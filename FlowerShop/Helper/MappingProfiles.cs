@@ -9,6 +9,7 @@ namespace FlowerShop.Helper
         public MappingProfiles() 
         {
             CreateMap<Flower, FlowerDto>();
+            CreateMap<Bouquet, BouquetDto>();
         }
     }
 }

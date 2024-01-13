@@ -8,6 +8,6 @@ namespace FlowerShop.Interfaces
         Bouquet GetBouquet(int id);
         ICollection<Bouquet> GetBouquetsByFlower(int flowerId);
         bool BouquetExists(int id);
-        Bouquet GetBouquetByCost(int costId);
+        ICollection<Bouquet> GetBouquetsByCost(int cost);
     }
 }

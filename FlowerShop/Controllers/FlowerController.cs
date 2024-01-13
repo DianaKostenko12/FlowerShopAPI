@@ -44,8 +44,8 @@ namespace FlowerShop.Controllers
             return Ok(flower);
         }
 
-        [HttpGet("{name}")]
-        public IActionResult GetFlowerByName(string name) 
+        [HttpGet("flower")]
+        public IActionResult GetFlowerByName([FromQuery] string name) 
         {
             var flower = _mapper.Map<FlowerDto>(_flowerRepository.GetFlowerByName(name));
 
