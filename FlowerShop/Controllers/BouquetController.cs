@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using FlowerShop.DTO;
 using FlowerShop.Interfaces;
+using FlowerShop.Models;
 using FlowerShop.Repository;
 using Microsoft.AspNetCore.Mvc;
 
@@ -45,9 +46,9 @@ namespace FlowerShop.Controllers
         }
 
         [HttpGet("bouquet")]
-        public IActionResult GetBouquetsByCost([FromQuery] int cost)
+        public IActionResult GetBouquetsByCost([FromQuery] float minCost, float maxCost)
         {
-            var bouquets = _mapper.Map<BouquetDto>(_bouquetRepository.GetBouquetsByCost(cost));
+            var bouquets = _mapper.Map<BouquetDto>(_bouquetRepository.GetBouquetsByCost(minCost, maxCost));
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -60,6 +61,18 @@ namespace FlowerShop.Controllers
         {
             var bouquets = _mapper.Map<List<BouquetDto>>(
                 _bouquetRepository.GetBouquetsByFlower(flowerId));
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            return Ok(bouquets);
+        }
+
+        [HttpGet("order")]
+        public IActionResult GetBouquetsByOrder([FromQuery] int orderId)
+        {
+            var bouquets = _mapper.Map<List<BouquetDto>>(
+                _bouquetRepository.GetBouquetsByOrder(orderId));
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);

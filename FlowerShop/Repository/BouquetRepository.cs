@@ -21,9 +21,9 @@ namespace FlowerShop.Repository
             return _context.Bouquets.Where(b => b.BouquetId == id).FirstOrDefault();
         }
 
-        public ICollection<Bouquet> GetBouquetsByCost(int cost)
+        public ICollection<Bouquet> GetBouquetsByCost(float minCost, float maxCost)
         {
-            return _context.Bouquets.Where(b => b.BouquetCost == cost).ToList();
+            return _context.Bouquets.Where(b => b.BouquetCost >= minCost && b.BouquetCost <= maxCost).ToList();
         }
 
         public ICollection<Bouquet> GetBouquets()
@@ -34,6 +34,11 @@ namespace FlowerShop.Repository
         public ICollection<Bouquet> GetBouquetsByFlower(int flowerId)
         {
             return _context.BouquetFlowers.Where(f => f.FlowerId == flowerId).Select(b => b.Bouquet).ToList();
+        }
+
+        public ICollection<Bouquet> GetBouquetsByOrder(int orderId) 
+        {
+            return _context.OrderBouquets.Where(o => o.OrderId == orderId).Select(b => b.Bouquet).ToList();
         }
     }
 }

@@ -17,6 +17,8 @@ namespace FlowerShop
             builder.Services.AddControllers();
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             builder.Services.AddScoped<IFlowerRepository, FlowerRepository>();
+            builder.Services.AddScoped<IGiftRepository, GiftRepository>();
+            builder.Services.AddScoped<IBouquetRepository, BouquetRepository>();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
