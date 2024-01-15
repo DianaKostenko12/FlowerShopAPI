@@ -7,5 +7,6 @@
         public DateTime OrderDate { get; set; }
         public ICollection<OrderBouquet> OrderBouquets { get; set; }
         public ICollection<OrderGift> OrderGifts { get; set; }
+        public Client Client { get; set; }
     }
 }
