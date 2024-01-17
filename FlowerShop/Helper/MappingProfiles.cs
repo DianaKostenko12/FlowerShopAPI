@@ -11,6 +11,12 @@ namespace FlowerShop.Helper
             CreateMap<Flower, FlowerDto>();
             CreateMap<Bouquet, BouquetDto>();
             CreateMap<Gift, GiftDto>();
+            CreateMap<Order, OrderDto>();   
+            CreateMap<Client, ClientDto>();
+            CreateMap<BouquetDto, Bouquet>();
+            CreateMap<ClientDto, Client>();
+            CreateMap<GiftDto, Gift>();
+            CreateMap<OrderDto, Order>();
         }
     }
 }

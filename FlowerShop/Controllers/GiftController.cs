@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using FlowerShop.DTO;
 using FlowerShop.Interfaces;
+using FlowerShop.Models;
 using FlowerShop.Repository;
 using Microsoft.AspNetCore.Mvc;
 
@@ -46,7 +47,7 @@ namespace FlowerShop.Controllers
         [HttpGet("gift")]
         public IActionResult GetBouquetsByCost([FromQuery] float minCost, float maxCost)
         {
-            var gifts = _mapper.Map<GiftDto>(_giftRepository.GetGiftsByCost(minCost, maxCost));
+            var gifts = _mapper.Map<List<GiftDto>>(_giftRepository.GetGiftsByCost(minCost, maxCost));
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -64,6 +65,35 @@ namespace FlowerShop.Controllers
                 return BadRequest(ModelState);
 
             return Ok(gifts);
+        }
+
+        [HttpPost]
+        public IActionResult CreateGift([FromBody] GiftDto giftCreate)
+        {
+            if (giftCreate == null)
+                return BadRequest(ModelState);
+
+            var gift = _giftRepository.GetGifts().Where(b => b.GiftName.Trim().ToUpper() == giftCreate.GiftName.TrimEnd()
+            .ToUpper()).FirstOrDefault();
+
+            if (gift != null)
+            {
+                ModelState.AddModelError("", "Client already exists");
+                return StatusCode(422, ModelState);
+            }
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var giftMap = _mapper.Map<Gift>(giftCreate);
+
+            if (!_giftRepository.CreateGift(giftMap))
+            {
+                ModelState.AddModelError("", "Something went wrong while saving");
+                return StatusCode(500, ModelState);
+            }
+
+            return Ok("Successfully created");
         }
     }
 }

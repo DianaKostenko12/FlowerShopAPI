@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using FlowerShop.DTO;
 using FlowerShop.Interfaces;
+using FlowerShop.Models;
 using FlowerShop.Repository;
 using FlowerShop.Views;
 using Microsoft.AspNetCore.Mvc;
@@ -12,11 +13,13 @@ namespace FlowerShop.Controllers
     public class OrderController : Controller
     {
         private readonly IOrderRepository _orderRepository;
+        private readonly IClientRepository _clientRepository;
         private readonly IMapper _mapper;
-        public OrderController(IOrderRepository orderRepository, IMapper mapper)
+        public OrderController(IOrderRepository orderRepository, IClientRepository clientRepository, IMapper mapper)
         {
             _orderRepository = orderRepository;
             _mapper = mapper;
+            _clientRepository = clientRepository;
         }
 
         [HttpGet]
@@ -47,8 +50,10 @@ namespace FlowerShop.Controllers
         [HttpGet("gift")]
         public IActionResult GetOrderGiftsWithCount([FromQuery] int orderId)
         {
-            var orders = _mapper.Map<List<OrderGiftWithCount>>(
-                _orderRepository.GetOrderGiftsWithCount(orderId));
+            if (!_orderRepository.OrderExists(orderId))
+                return NotFound();
+
+            var orders = _orderRepository.GetOrderGiftsWithCount(orderId); 
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -59,8 +64,10 @@ namespace FlowerShop.Controllers
         [HttpGet("bouquet")]
         public IActionResult GetOrderBouquetsWithCount([FromQuery] int orderId)
         {
-            var orders = _mapper.Map<List<OrderBouquetWithCount>>(
-                _orderRepository.GetOrderBouquetsWithCount(orderId));
+            if (!_orderRepository.OrderExists(orderId))
+                return NotFound();
+
+            var orders =  _orderRepository.GetOrderBouquetsWithCount(orderId);
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -68,16 +75,39 @@ namespace FlowerShop.Controllers
             return Ok(orders);
         }
 
-        //[HttpGet("client")]
-        //public IActionResult GetClientByOrder([FromQuery] int orderId)
-        //{
-        //    var clients = _mapper.Map<List<ClientDto>>(
-        //        _clientRepository.GetClientByOrder(orderId));
+        [HttpGet("client")]
+        public IActionResult GetClientByOrder([FromQuery] int orderId)
+        {
+            if (!_orderRepository.OrderExists(orderId))
+                return NotFound();
 
-        //    if (!ModelState.IsValid)
-        //        return BadRequest(ModelState);
+            var clients = _mapper.Map<List<ClientDto>>(
+                _orderRepository.GetClientByOrder(orderId));
 
-        //    return Ok(clients);
-        //}
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            return Ok(clients);
+        }
+
+        [HttpPost]
+        public IActionResult CreateOrder([FromBody] OrderDto orderCreate)
+        {
+            if (orderCreate == null)
+                return BadRequest(ModelState);
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var orderMap = _mapper.Map<Order>(orderCreate);
+
+            if (!_orderRepository.CreateOrder(orderMap))
+            {
+                ModelState.AddModelError("", "Something went wrong while saving");
+                return StatusCode(500, ModelState);
+            }
+
+            return Ok("Successfully created");
+        }
     }
 }

@@ -11,5 +11,7 @@ namespace FlowerShop.Interfaces
         bool OrderExists(int orderId);
         ICollection<OrderBouquetWithCount> GetOrderBouquetsWithCount(int OrderId);
         ICollection<OrderGiftWithCount> GetOrderGiftsWithCount(int OrderId);
+        bool CreateOrder(Order order);
+        bool Save();
     }
 }

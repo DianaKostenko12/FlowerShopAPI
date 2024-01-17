@@ -8,5 +8,7 @@ namespace FlowerShop.Interfaces
         Flower GetFlowerById(int id);
         Flower GetFlowerByName(string name);
         bool FlowerExists(int Id);
+        bool CreateFlower(int bouquetId, Flower flower);
+        bool Save();
     }
 }

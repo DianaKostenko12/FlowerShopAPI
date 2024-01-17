@@ -12,6 +12,23 @@ namespace FlowerShop.Repository
             _context = context;
         }
 
+        public bool CreateFlower(int bouquetId, Flower flower)
+        {
+            var flowerBouquet = _context.Bouquets.Where(b => b.BouquetId== bouquetId).FirstOrDefault();
+
+            var bouquetFlower = new BouquetFlower()
+            {
+                Bouquet = flowerBouquet,
+                Flower = flower,
+            };
+
+            _context.Add(bouquetFlower);
+
+            _context.Add(flower);
+
+            return Save();
+        }
+
         public bool FlowerExists(int Id)
         {
             return _context.Flowers.Any(f => f.FlowerId == Id);
@@ -30,6 +47,12 @@ namespace FlowerShop.Repository
         public ICollection<Flower> GetFlowers() 
         {
             return _context.Flowers.OrderBy(f => f.FlowerId).ToList();
+        }
+
+        public bool Save()
+        {
+            var saved = _context.SaveChanges();
+            return saved > 0 ? true : false;
         }
     }
 }

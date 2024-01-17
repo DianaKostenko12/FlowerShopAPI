@@ -45,10 +45,10 @@ namespace FlowerShop.Controllers
             return Ok(bouquet);
         }
 
-        [HttpGet("bouquet")]
+        [HttpGet("cost")]
         public IActionResult GetBouquetsByCost([FromQuery] float minCost, float maxCost)
         {
-            var bouquets = _mapper.Map<BouquetDto>(_bouquetRepository.GetBouquetsByCost(minCost, maxCost));
+            var bouquets = _mapper.Map<List<BouquetDto>>(_bouquetRepository.GetBouquetsByCost(minCost, maxCost));
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -78,6 +78,35 @@ namespace FlowerShop.Controllers
                 return BadRequest(ModelState);
 
             return Ok(bouquets);
+        }
+
+        [HttpPost]
+        public IActionResult CreateBouquet([FromBody] BouquetDto bouquetCreate)
+        {
+            if(bouquetCreate == null) 
+                return BadRequest(ModelState);
+
+            var bouquet = _bouquetRepository.GetBouquets().Where(b => b.BouquetName.Trim().ToUpper() == bouquetCreate.BouquetName.TrimEnd()
+            .ToUpper()).FirstOrDefault();
+
+            if(bouquet != null)
+            {
+                ModelState.AddModelError("", "Bouquet already exists");
+                return StatusCode(422, ModelState);
+            }
+
+            if(!ModelState.IsValid) 
+                return BadRequest(ModelState);
+
+            var bouquetMap = _mapper.Map<Bouquet>(bouquetCreate);
+
+            if (!_bouquetRepository.CreateBouquet(bouquetMap))
+            {
+                ModelState.AddModelError("", "Something went wrong while saving");
+                return StatusCode(500, ModelState);
+            }
+
+            return Ok("Successfully created");
         }
     }
 }

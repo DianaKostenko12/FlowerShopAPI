@@ -40,5 +40,17 @@ namespace FlowerShop.Repository
         {
             return _context.OrderBouquets.Where(o => o.OrderId == orderId).Select(b => b.Bouquet).ToList();
         }
+
+        public bool CreateBouquet(Bouquet bouquet)
+        {
+            _context.Add(bouquet);
+            return Save();
+        }
+
+        public bool Save()
+        {
+            var saved = _context.SaveChanges();
+            return saved > 0 ? true : false;
+        }
     }
 }

@@ -14,6 +14,13 @@ namespace FlowerShop.Repository
             _context = context;
             _mapper = mapper;
         }
+
+        public bool CreateGift(Gift gift)
+        {
+            _context.Add(gift);
+            return Save(); ;
+        }
+
         public Gift GetGift(int id)
         {
             return _context.Gifts.Where(g => g.GiftId == id).FirstOrDefault();
@@ -37,6 +44,12 @@ namespace FlowerShop.Repository
         public bool GiftExists(int id)
         {
             return _context.Gifts.Any(g => g.GiftId == id);
+        }
+
+        public bool Save()
+        {
+            var saved = _context.SaveChanges();
+            return saved > 0 ? true : false; 
         }
     }
 }
