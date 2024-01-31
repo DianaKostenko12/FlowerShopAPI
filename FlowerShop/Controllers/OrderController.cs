@@ -14,12 +14,27 @@ namespace FlowerShop.Controllers
     {
         private readonly IOrderRepository _orderRepository;
         private readonly IClientRepository _clientRepository;
+        private readonly IGiftRepository _giftRepository;
+        private readonly IOrderGiftRepository _orderGiftRepository;
+        private readonly IBouquetRepository _bouquetRepository;
+        private readonly IOrderBouquetRepository _orderBouquetRepository;
         private readonly IMapper _mapper;
-        public OrderController(IOrderRepository orderRepository, IClientRepository clientRepository, IMapper mapper)
+        public OrderController(
+            IOrderRepository orderRepository, 
+            IClientRepository clientRepository, 
+            IGiftRepository giftRepository,
+            IOrderGiftRepository orderGiftRepository,
+            IBouquetRepository bouquetRepository,
+            IOrderBouquetRepository orderBouquetRepository,
+            IMapper mapper)
         {
             _orderRepository = orderRepository;
-            _mapper = mapper;
             _clientRepository = clientRepository;
+            _giftRepository = giftRepository;
+            _orderGiftRepository = orderGiftRepository;
+            _bouquetRepository = bouquetRepository;
+            _orderBouquetRepository = orderBouquetRepository;
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -91,21 +106,43 @@ namespace FlowerShop.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateOrder([FromBody] OrderDto orderCreate)
+        public IActionResult CreateOrder([FromBody] AddOrderModel model)
         {
-            if (orderCreate == null)
+            if (model == null)
                 return BadRequest(ModelState);
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var orderMap = _mapper.Map<Order>(orderCreate);
+            var gifts = _giftRepository.GetGifts()
+                .Where(g => model.Gifts.Any(gift => gift.id == g.GiftId));
 
-            if (!_orderRepository.CreateOrder(orderMap))
+            var order = new Order() { OrderDate = DateTime.Now };
+            _orderRepository.CreateOrder(order);
+            _orderRepository.Save();
+
+            var orderGifts = gifts.Select(gift => new OrderGift() 
+                {
+                    Order = order, 
+                    Gift = gift,
+                    GiftCount = model.Gifts.First(g => g.id == gift.GiftId).count
+                }
+            );
+            _orderGiftRepository.CreateRange(orderGifts);
+            _orderGiftRepository.Save();
+
+            var bouquets = _bouquetRepository.GetBouquets()
+               .Where(b => model.Bouquets.Any(bouquet => bouquet.id == b.BouquetId));
+
+            var orderBouquets = bouquets.Select(bouquet => new OrderBouquet()
             {
-                ModelState.AddModelError("", "Something went wrong while saving");
-                return StatusCode(500, ModelState);
+                Order = order,
+                Bouquet = bouquet,
+                BouquetCount = model.Bouquets.First(b => b.id == bouquet.BouquetId).count
             }
+           );
+            _orderBouquetRepository.CreateRange(orderBouquets);
+            _orderBouquetRepository.Save();
 
             return Ok("Successfully created");
         }

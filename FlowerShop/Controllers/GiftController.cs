@@ -45,7 +45,7 @@ namespace FlowerShop.Controllers
         }
 
         [HttpGet("gift")]
-        public IActionResult GetBouquetsByCost([FromQuery] float minCost, float maxCost)
+        public IActionResult GetGiftsByCost([FromQuery] float minCost, float maxCost)
         {
             var gifts = _mapper.Map<List<GiftDto>>(_giftRepository.GetGiftsByCost(minCost, maxCost));
 
@@ -73,8 +73,9 @@ namespace FlowerShop.Controllers
             if (giftCreate == null)
                 return BadRequest(ModelState);
 
-            var gift = _giftRepository.GetGifts().Where(b => b.GiftName.Trim().ToUpper() == giftCreate.GiftName.TrimEnd()
-            .ToUpper()).FirstOrDefault();
+            var gift = _giftRepository.GetGifts()
+                .Where(b => b.GiftName.Trim().ToUpper() == giftCreate.GiftName.TrimEnd().ToUpper())
+                .FirstOrDefault();
 
             if (gift != null)
             {

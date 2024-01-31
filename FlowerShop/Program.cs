@@ -23,6 +23,9 @@ namespace FlowerShop
             builder.Services.AddScoped<IBouquetRepository, BouquetRepository>();
             builder.Services.AddScoped<IOrderRepository, OrderRepository>();
             builder.Services.AddScoped<IClientRepository, ClientRepository>();
+            builder.Services.AddScoped<IOrderGiftRepository, OrderGiftRepository>();
+            builder.Services.AddScoped<IOrderBouquetRepository, OrderBouquetRepository>();
+
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();

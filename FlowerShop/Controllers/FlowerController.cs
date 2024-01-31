@@ -54,7 +54,5 @@ namespace FlowerShop.Controllers
 
             return Ok(flower);
         }
-
-
     }
 }
