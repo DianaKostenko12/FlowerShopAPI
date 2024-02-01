@@ -4,7 +4,7 @@ namespace FlowerShop.Interfaces
 {
     public interface IBouquetRepository
     {
-        ICollection<Bouquet> GetBouquets();
+        IEnumerable<Bouquet> GetBouquets();
         Bouquet GetBouquet(int id);
         ICollection<Bouquet> GetBouquetsByFlower(int flowerId);
         bool BouquetExists(int id);

@@ -26,7 +26,7 @@ namespace FlowerShop.Repository
             return _context.Gifts.Where(g => g.GiftId == id).FirstOrDefault();
         }
 
-        public ICollection<Gift> GetGifts()
+        public IEnumerable<Gift> GetGifts()
         {
             return _context.Gifts.ToList();
         }

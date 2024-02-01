@@ -4,7 +4,12 @@ namespace FlowerShop.DTO
 {
     public class AddOrderModel
     {
-        public ICollection<(int id, int count)> Bouquets { get; set; }
-        public ICollection<(int id, int count)> Gifts { get; set; }
+        public IEnumerable<Item> Bouquets { get; set; }
+        public IEnumerable<Item> Gifts { get; set; }
+    }
+    public class Item
+    {
+        public int Id { get; set; }
+        public int Count { get; set; }
     }
 }

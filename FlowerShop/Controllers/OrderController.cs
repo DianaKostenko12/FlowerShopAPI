@@ -115,7 +115,8 @@ namespace FlowerShop.Controllers
                 return BadRequest(ModelState);
 
             var gifts = _giftRepository.GetGifts()
-                .Where(g => model.Gifts.Any(gift => gift.id == g.GiftId));
+                .Where(g => model.Gifts.Any(gift => gift.Id == g.GiftId))
+                .ToList();
 
             var order = new Order() { OrderDate = DateTime.Now };
             _orderRepository.CreateOrder(order);
@@ -125,20 +126,20 @@ namespace FlowerShop.Controllers
                 {
                     Order = order, 
                     Gift = gift,
-                    GiftCount = model.Gifts.First(g => g.id == gift.GiftId).count
+                    GiftCount = model.Gifts.First(g => g.Id == gift.GiftId).Count
                 }
             );
             _orderGiftRepository.CreateRange(orderGifts);
             _orderGiftRepository.Save();
 
             var bouquets = _bouquetRepository.GetBouquets()
-               .Where(b => model.Bouquets.Any(bouquet => bouquet.id == b.BouquetId));
+               .Where(b => model.Bouquets.Any(bouquet => bouquet.Id == b.BouquetId));
 
             var orderBouquets = bouquets.Select(bouquet => new OrderBouquet()
             {
                 Order = order,
                 Bouquet = bouquet,
-                BouquetCount = model.Bouquets.First(b => b.id == bouquet.BouquetId).count
+                BouquetCount = model.Bouquets.First(b => b.Id == bouquet.BouquetId).Count
             }
            );
             _orderBouquetRepository.CreateRange(orderBouquets);

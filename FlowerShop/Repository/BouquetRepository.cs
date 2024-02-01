@@ -26,7 +26,7 @@ namespace FlowerShop.Repository
             return _context.Bouquets.Where(b => b.BouquetCost >= minCost && b.BouquetCost <= maxCost).ToList();
         }
 
-        public ICollection<Bouquet> GetBouquets()
+        public IEnumerable<Bouquet> GetBouquets()
         {
             return _context.Bouquets.ToList();
         }
