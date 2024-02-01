@@ -108,40 +108,33 @@ namespace FlowerShop.Controllers
         [HttpPost]
         public IActionResult CreateOrder([FromBody] AddOrderModel model)
         {
-            if (model == null)
-                return BadRequest(ModelState);
-
-            if (!ModelState.IsValid)
+            if (model == null || !ModelState.IsValid)
                 return BadRequest(ModelState);
 
             var gifts = _giftRepository.GetGifts()
-                .Where(g => model.Gifts.Any(gift => gift.Id == g.GiftId))
-                .ToList();
+                .Where(g => model.Gifts.Any(gift => gift.Id == g.GiftId));
+            var bouquets = _bouquetRepository.GetBouquets()
+               .Where(b => model.Bouquets.Any(bouquet => bouquet.Id == b.BouquetId));
 
             var order = new Order() { OrderDate = DateTime.Now };
             _orderRepository.CreateOrder(order);
             _orderRepository.Save();
 
             var orderGifts = gifts.Select(gift => new OrderGift() 
-                {
-                    Order = order, 
-                    Gift = gift,
-                    GiftCount = model.Gifts.First(g => g.Id == gift.GiftId).Count
-                }
-            );
+            {
+                Order = order, 
+                Gift = gift,
+                GiftCount = model.Gifts.First(g => g.Id == gift.GiftId).Count
+            });
             _orderGiftRepository.CreateRange(orderGifts);
             _orderGiftRepository.Save();
-
-            var bouquets = _bouquetRepository.GetBouquets()
-               .Where(b => model.Bouquets.Any(bouquet => bouquet.Id == b.BouquetId));
 
             var orderBouquets = bouquets.Select(bouquet => new OrderBouquet()
             {
                 Order = order,
                 Bouquet = bouquet,
                 BouquetCount = model.Bouquets.First(b => b.Id == bouquet.BouquetId).Count
-            }
-           );
+            });
             _orderBouquetRepository.CreateRange(orderBouquets);
             _orderBouquetRepository.Save();
 
